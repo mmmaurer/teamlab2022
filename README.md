@@ -1,1 +1,2 @@
-# teamlab2022
+# Artist classification
+> Team Labs / Summer S22
