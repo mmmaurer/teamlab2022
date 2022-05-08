@@ -1,31 +1,36 @@
 import re
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'data_representations'))
-from data_representations import BOW
+
+from data_representations.data_representations import BOW
 
 class Preprocessor():
-    def __init__(self, filepath, keep_punc=False):
+    def __init__(self, filepath, keep_punc=False, read_limit=1000):
         """Preprocessing class, does reading and tokenising.
 
         Args:
             filename (string): path to the data set file
             keep_punc (bool, optional): Keep punctuation in the tokens-option. Defaults to False.
+            read_limit (int, optional): number of examples to read from file. Defaults to 1000.
         """
         self.keep_punc = keep_punc
-        self.artists, self.titles, self.tokenized_lyrics = self.read(filepath)
+        self.artists, self.titles, self.tokenized_lyrics = self.read(filepath, read_limit)
 
-    def read(self, filepath):
+    def read(self, filepath, read_limit=1000):
         """Read file and tokenize lyrics 
 
         Args:
             filename (string): path to the data set file
+            read_limit (int, optional): number of examples to read from file. Defaults to 1000.
 
         Returns:
             list(string), list(string), list(list(string)): list of artists, list of songtitles, list of tokens
         """
         artists, titles, tokenized_lyrics = [], [], []
         with open(filepath, 'r') as f:
-            for line in f.readlines():
+            for i, line in enumerate(f.readlines()):
+                if i >= read_limit:
+                    break
+
                 # The three values for each line are joined together with the tab '\t' character
                 artist, title, lyrics = line.split('\t')
 
