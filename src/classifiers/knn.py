@@ -14,7 +14,12 @@ class Knn():
         Args:
             input (typing.List[BOW]): training examples used by the model.
             targets (typing.List[int]): labels corresponding to the training examples.
+
+        Raises:
+            ValueError: raised when targets length not equal to input list length.
         """
+        if len(input) != len(targets):
+            raise ValueError(f"Input and targets lists are not the same dimension. input len={len(input)}, targets len={len(targets)}")
         
         self.data = input
         self.targets = targets
@@ -58,24 +63,3 @@ class Knn():
 
         
         return predictions
-
-
-if __name__ == "__main__":
-    # TODO: remove these test examples
-    training =  [
-        BOW(["Chickens", "be", "like", "that", "sometimes"]),
-        BOW(["Moms", "be", "like", "that", "sometimes"]),
-        BOW(["Dads", "be", "like", "that", "sometimes"]),
-        BOW(["Dads", "be", "like", "that", "sometimes"]),
-        BOW(["Grandmas", "be", "like", "that", "sometimes"]),
-    ]
-    labels = [1,2,3,3,4]
-
-    classifier = Knn(training, labels)
-
-    inputs = [
-        BOW(['Dads', 'like', 'nothing']),
-        BOW(['Grandmas', 'like', 'nothing'])
-    ]
-
-    print(classifier.predict(inputs, 2))
