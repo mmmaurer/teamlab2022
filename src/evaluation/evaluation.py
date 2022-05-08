@@ -54,8 +54,14 @@ class Evaluator():
         Returns:
             dict(int:float): precision per class in the gold data
         """
-        # if-condition to prevent division by zero in cases where there is no instance classified as the class
-        return {i:self.tp_per_class[i]/(self.tp_per_class[i]+self.fp_per_class[i]) if i in self.pred else 0 for i in range(self.n_classes)}
+        # if-condition to prevent division by zero in cases where there is no instance classified as the class or both TP and FN are zero
+        prec_dict = {}
+        for i in range (self.n_classes):
+            if not i in self.pred or (self.tp_per_class[i] == self.fn_per_class[i] == 0):
+                prec_dict[i] = 0
+            else:
+                prec_dict[i] = self.tp_per_class[i]/(self.tp_per_class[i]+self.fp_per_class[i])
+        return prec_dict
 
     def recall_per_class(self):
         """Recalls per class: TP / (TP + FN)
@@ -63,8 +69,14 @@ class Evaluator():
         Returns:
             dict(int:float): recall per class in the gold data
         """
-        # if-condition to prevent division by zero in cases where there is no instance classified as the class
-        return {i:self.tp_per_class[i]/(self.tp_per_class[i]+self.fn_per_class[i]) if i in self.pred else 0 for i in range(self.n_classes)}
+        # if-condition to prevent division by zero in cases where there is no instance classified as the class or both TP and FN are zero
+        rec_dict = {}
+        for i in range (self.n_classes):
+            if not i in self.pred or (self.tp_per_class[i] == self.fn_per_class[i] == 0):
+                rec_dict[i] = 0
+            else:
+                rec_dict[i] = self.tp_per_class[i]/(self.tp_per_class[i]+self.fn_per_class[i])
+        return rec_dict
 
     def fscore_per_class(self):
         """F-Score F1 = (2PR)/(P+R) per class
