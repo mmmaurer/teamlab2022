@@ -16,8 +16,9 @@ if __name__ == "__main__":
     dataset_test = Preprocessor(filepath=filepath_test, read_limit=100)
 
     # Create numerical representations of labels for mapping
-    label_to_num = {artist:i for i, artist in enumerate(set(dataset_train.artists) | set(dataset_test.artists))}
-    num_to_label = {value:key for key, value in label_to_num.items()}
+    label_to_num = {artist: i for i, artist in enumerate(
+                    set(dataset_train.artists) | set(dataset_test.artists))}
+    num_to_label = {value: key for key, value in label_to_num.items()}
 
     # Initiate Knn classifier
     training_examples = dataset_train.BOW()
@@ -31,4 +32,4 @@ if __name__ == "__main__":
 
     # Run evaluation of algorithms performance
     evaluator = Evaluator(test_labels, predictions)
-    print("Accuracy:",evaluator.accuracy())
+    print("Accuracy:", evaluator.accuracy())
