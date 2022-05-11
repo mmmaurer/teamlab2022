@@ -15,8 +15,9 @@ class Evaluator():
         """
         self.gold = gold
         self.pred = pred
+        self.classes = set(gold)
         # we need to know the number of classes for micro and macro metrics
-        self.n_classes = len(set(gold))
+        self.n_classes = len(self.classes)
         # Precalculating the following since we might want to output more than
         # one metric so might aswell
         tp, fn, fp, tn = self.instances_per_class()
@@ -31,7 +32,7 @@ class Evaluator():
                             classifications per class
         """
         tp, fp, tn, fn = {}, {}, {}, {}
-        for i in range(self.n_classes):
+        for i in self.classes:
             tp[i] = 0
             fp[i] = 0
             tn[i] = 0
@@ -40,7 +41,7 @@ class Evaluator():
         # for each pair of gold label and prediction
         for g, p in zip(self.gold, self.pred):
             # for each class
-            for c in range(self.n_classes):
+            for c in self.classes:
                 # gold label and prediction match
                 # and match the class -> TP
                 if g == p and p == c:
