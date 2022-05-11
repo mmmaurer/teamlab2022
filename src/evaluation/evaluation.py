@@ -1,5 +1,15 @@
 import typing
 
+# NOTE: I think it would make the code easier and more readable, if you don't have this huge amount of
+# properties of tp_per_class, etc... and instance_per_class, but rather have simple functions
+# that separately calculate TP, FP etc. and then just call those in the specific function.
+
+# The computation will be bigger, but the code will look nicer, which I believe is more important, since
+# it will make the code easier to debug and understand
+
+# NOTE: as for calculating TP, FP, etc. per class: two options, etiher filter before sending it to the functions
+# or add an extra optional parameter, like "filtr", that will filter inside before doing the calculations
+
 class Evaluator():
     """Acts as an evaluator object for a given pair of predictions and their corresponding ground truth
     """
@@ -26,16 +36,18 @@ class Evaluator():
         for i in range(self.n_classes):
             # Initializing per class to prevent key errors and checking if key for class is in keys of dict already
             tp[i], fp[i], tn[i], fn[i] = 0, 0, 0, 0
+
+            # TODO: Check if it's not mixing j (from pred) with i (from gold) in the way you check for TP, FP,...
             for j, k in zip(self.pred, self.gold):
                 if j==i:
                     if j==k:
                         tp[i] += 1
-                    elif j!=k:
+                    else:
                         fp[i] += 1
                 if k==i:
                     if j==k:
                         tn[i] += 1
-                    elif j!=k:
+                    else:
                         fn[i] += 1
         return tn, fp, tn, fn
         
