@@ -1,6 +1,9 @@
 from typing import List
-
-from data_representations.data_representations import BOW
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..',
+                             'data_representations'))
+from data_representations import BOW
 
 
 class Knn():
@@ -29,13 +32,20 @@ class Knn():
         self.data = input
         self.targets = targets
 
-    def predict(self, input: List[BOW], k=5) -> List[int]:
+    def predict(self, input: List[BOW], k=5, measure="tversky",
+                alpha=1, beta=1) -> List[int]:
         """Predict classification for a list of input examples.
 
         Args:
             input (typing.List[BOW]): input examples we want to predict.
             k (int, optional): number of nearest neighbours to compare.
                                Defaults to 5.
+            measure (string, optional): Distance measure to use.
+                                        Defaults to "tversky".
+            alpha (float, optional): Alpha value for Tversky index.
+                                     Defaults to 1.
+            beta (float, optional): Beta value for Tversky index.
+                                    Defaults to 1.
 
         Raises:
             TypeError: raised when input is not of same class type as
@@ -53,7 +63,8 @@ class Knn():
             distances = []
             # Calculate distance between x and all examples in training set
             for i, example in enumerate(self.data):
-                distance = example.distance(x)
+                distance = example.distance(x, measure=measure,
+                                            alpha=alpha, beta=beta)
                 distances.append([i, distance])
 
             # Sorts distances and picks k closest examples
