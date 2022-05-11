@@ -85,7 +85,7 @@ class Evaluator():
         # if-condition to prevent division by zero in cases where there
         # is no instance classified as the class or both TP and FN are zero
         prec_dict = {}
-        for i in range(self.n_classes):
+        for i in self.classes:
             if (i not in self.pred or (self.tp_per_class[i] ==
                                        self.fn_per_class[i] == 0)):
                 prec_dict[i] = 0
@@ -103,7 +103,7 @@ class Evaluator():
         # if-condition to prevent division by zero in cases where there is
         # no instance classified as the class or both TP and FN are zero
         rec_dict = {}
-        for i in range(self.n_classes):
+        for i in self.classes:
             if (i not in self.pred or (self.tp_per_class[i] ==
                                        self.fn_per_class[i] == 0)):
                 rec_dict[i] = 0
@@ -121,7 +121,7 @@ class Evaluator():
         # if-condition to prevent division by zero in cases where there
         # is no instance classified as the class
         f_dict = {}
-        for i in range(self.n_classes):
+        for i in self.classes:
             if (i not in self.pred or
                 (self.precision_per_class()[i] ==
                  self.recall_per_class()[i] == 0)):
