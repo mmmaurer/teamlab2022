@@ -1,5 +1,6 @@
 import unittest
-import sys, os
+import sys
+import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'evaluation'))
 from evaluation import Evaluator
 
@@ -7,8 +8,8 @@ from evaluation import Evaluator
 class TestEvaluator(unittest.TestCase):
     def test_perfect_score(self):
         # to test for realistic runtime too;
-        # if the data set was balanced, this would be a realistic size
-        # of data set and dist of classes
+        # if the data set was balanced, this would be a realistic size of data
+        # set and dist of classes
         pred, gold = [], []
         for i in range(650):
             pred += [i for _ in range(77)]
@@ -30,6 +31,10 @@ class TestEvaluator(unittest.TestCase):
 
     def test_functionality(self):
         evaluator = Evaluator([1, 2, 0], [1, 2, 1])
+        self.assertEqual(str(evaluator.tp_per_class), "{0: 0, 1: 1, 2: 1}")
+        self.assertEqual(str(evaluator.fn_per_class), "{0: 1, 1: 0, 2: 0}")
+        self.assertEqual(str(evaluator.fp_per_class), "{0: 0, 1: 1, 2: 0}")
+        self.assertEqual(str(evaluator.tn_per_class), "{0: 2, 1: 1, 2: 2}")
         self.assertAlmostEqual(evaluator.accuracy(), 2/3)
         self.assertEqual(evaluator.precision_per_class(),
                          {0: 0, 1: 0.5, 2: 1.0})
