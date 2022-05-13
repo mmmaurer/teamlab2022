@@ -3,7 +3,7 @@ import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..',
                              'data_representations'))
-from data_representations.vector import Vector
+from vector import Vector
 
 
 class Knn():
