@@ -34,28 +34,52 @@ class Vector():
         for val in self._vector:
             yield val
 
-    def cosine_similarity(self, vector: Vector) -> float:
+    def distance(self, other, measure="cosine"):
+        """Distance between class and input vector.
+        Choose between cosine and euclidean.
+
+        Args:
+            other (Vector): input vector to compare against.
+            measure (str, optional): Measure for comparison.
+                                     Defaults to "cosine".
+
+        Raises:
+            NotImplementedError: raises when not implemented 
+                                 measure gets chosen.
+
+        Returns:
+            float: distance/similarity measure
+        """
+        if measure == "cosine":
+            return self.__cosine_similarity(other)
+        elif measure == "euclidean":
+            return self.__euclidean_distance(other)
+        else:
+            error = f"{measure} not implemented (yet)."
+            raise NotImplementedError(error)
+
+    def __cosine_similarity(self, other: Vector) -> float:
         """Calculates the cosine similarity between the class and
         input vector. Value 1 means vectors are the same.
 
         Args:
-            vector (Vector): input vector 
+            other (Vector): input vector to compare against.
 
         Returns:
             float: value in range [0, 1]
         """
-        dot_product = sum([i * j for i, j in zip(self, vector)])
-        return dot_product / (self.magnitute * vector.magnitute)
+        dot_product = sum([i * j for i, j in zip(self, other)])
+        return dot_product / (self.magnitute * other.magnitute)
 
-    def euclidean_distance(self, vector: Vector) -> float:
+    def __euclidean_distance(self, other: Vector) -> float:
         """Calculates the euclidean_distance between the class and
         input vector. Value 0 means the vector are in the same position.
 
         Args:
-            vector (Vector): input vector 
+            other (Vector): input vector to compare against.
 
         Returns:
             float: value in range [0, inf]
         """
-        _sum = sum([math.pow(i - j, 2) for i, j in zip(self, vector)])
+        _sum = sum([math.pow(i - j, 2) for i, j in zip(self, other)])
         return math.sqrt(_sum)
