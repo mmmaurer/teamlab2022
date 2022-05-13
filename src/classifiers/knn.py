@@ -51,7 +51,8 @@ class Knn():
             typing.List[int]: list of predictions.
         """
 
-        if not type(input[0]) is type(self.data[0]):
+        if not isinstance(input[0], Vector) == isinstance(self.data[0],
+                                                          Vector):
             raise TypeError("Input and model data types are not of same class")
 
         predictions = []
