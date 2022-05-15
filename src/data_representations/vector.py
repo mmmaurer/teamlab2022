@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, List
+from typing import List
 import math
 
 
@@ -44,14 +44,15 @@ class Vector():
                                      Defaults to "cosine".
 
         Raises:
-            NotImplementedError: raises when not implemented 
+            NotImplementedError: raises when not implemented
                                  measure gets chosen.
 
         Returns:
-            float: distance/similarity measure
+            float: distance measure
         """
         if measure == "cosine":
-            return self.__cosine_similarity(other)
+            # dist measure instead of sim, thus 1 - sim
+            return 1 - self.__cosine_similarity(other)
         elif measure == "euclidean":
             return self.__euclidean_distance(other)
         else:
@@ -83,3 +84,9 @@ class Vector():
         """
         _sum = sum([math.pow(i - j, 2) for i, j in zip(self, other)])
         return math.sqrt(_sum)
+
+    def __str__(self) -> str:
+        return str(self._vector)
+
+    def __len__(self):
+        return len(self._vector)
