@@ -1,12 +1,15 @@
 import sys
 import os
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../..'))
-
 import unittest
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '../..',
+                             'data_representations'))
+sys.path.append(os.path.join(os.path.dirname(__file__), '../../'))
+
 from classifiers.knn import Knn
-from data_representations.data_representations import BOW
 from evaluation.evaluation import Evaluator
+from vector import Vector
+from data_representations import BOW
 
 
 class TestKnn(unittest.TestCase):
@@ -26,7 +29,7 @@ class TestKnn(unittest.TestCase):
         labels = [1, 2, 3, 3, 4]
 
         classifier = Knn(training, labels)
-        predictions = classifier.predict(training, k=1)
+        predictions = classifier.predict(training, k=1, measure='jaccard')
 
         evaluator = Evaluator(labels, predictions)
         self.assertEqual(evaluator.accuracy(), 1)
@@ -57,7 +60,7 @@ class TestKnn(unittest.TestCase):
         testing_labels = [3, 4, 4]
 
         classifier = Knn(training, labels)
-        predictions = classifier.predict(testing_inputs, k=3)
+        predictions = classifier.predict(testing_inputs, k=3, measure='jaccard')
 
         evaluator = Evaluator(testing_labels, predictions)
         self.assertAlmostEqual(evaluator.accuracy(), 2/3)
