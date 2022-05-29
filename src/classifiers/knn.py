@@ -86,9 +86,7 @@ class Knn():
 
             concurrent.futures.wait(futures)
 
-            predictions = list(itertools.chain(
-                *[future.result() for future in futures])
-            )
+            predictions = list(itertools.chain(*[future.result() for future in futures]))
 
         return predictions
 
