@@ -178,9 +178,12 @@ class Evaluator():
         Returns:
             float: micro averaged precision
         """
-        return (sum(self.tp_per_class.values()) /
-                (sum(self.tp_per_class.values()) +
-                sum(self.fp_per_class.values())))
+        denominator = (sum(self.tp_per_class.values()) +
+                       sum(self.fp_per_class.values()))
+        if denominator == 0:  # prevent division by zero
+            return 0
+        else:
+            return (sum(self.tp_per_class.values()) / denominator)
 
     def micro_recall(self):
         """For n classes:
@@ -191,9 +194,12 @@ class Evaluator():
         Returns:
             float: micro averaged recall
         """
-        return (sum(self.tp_per_class.values()) /
-                (sum(self.tp_per_class.values()) +
-                sum(self.fn_per_class.values())))
+        denominator = (sum(self.tp_per_class.values()) +
+                       sum(self.fn_per_class.values()))
+        if denominator == 0:  # prevent division by zero
+            return 0
+        else:
+            return (sum(self.tp_per_class.values()) / denominator)
 
     def micro_fscore(self):
         """F1 = (2PR)/(P+R)
