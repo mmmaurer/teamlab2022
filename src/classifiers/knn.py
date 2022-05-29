@@ -76,17 +76,18 @@ class Knn():
             """Yield successive n-sized chunks from lst."""
             for i in range(0, len(lst), n):
                 yield lst[i:i + n]
-
+                
+                
         chunk_size = int(len(input) / self.multi_process)
         with concurrent.futures.ProcessPoolExecutor(self.multi_process) as ex:
             futures = []
+            predictions = []
 
             for examples in chunks(input, chunk_size):
                 futures.append(ex.submit(self._predict, examples, k, measure))
 
             concurrent.futures.wait(futures)
-
-            predictions = list(itertools.chain(*[future.result() for future in futures]))
+            predictions += list(itertools.chain(*[future.result() for future in futures]))
 
         return predictions
 
