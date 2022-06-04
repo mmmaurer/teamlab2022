@@ -47,6 +47,7 @@ class Preprocessor():
 
         return artists, titles, tokenized_lyrics
 
+    # TODO: add description to tokenizer method (so what _roughly_ it's doing)
     def tokenize(self, lyrics):
         """Tokenize
 
@@ -61,25 +62,3 @@ class Preprocessor():
             return re.sub(r'[^\w\s]', '', cleaned).split(' ')
         else:
             return cleaned.split(' ')
-
-    def artists(self):
-        """Alias for preprocessor.artists
-
-        Returns:
-            list(string): list of artists of the data set
-        """
-        return self.artists
-
-    def titles(self):
-        """Alias for preprocessor.titles
-
-        Returns:
-            list(string): list of titles of the data set
-        """
-        return self.titles
-
-
-if __name__ == "__main__":
-    pre = Preprocessor("/home/mmm/Dropbox/Org/Uni/"
-                       "SS22/teamlab2022/data/songs_train.txt")
-    print(len(pre.artists) == len(pre.titles) == len(pre.tokenized))

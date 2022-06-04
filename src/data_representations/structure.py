@@ -1,5 +1,3 @@
-from collections import defaultdict, Counter
-import math
 from typing import List
 
 
@@ -35,5 +33,5 @@ class Structure():
         for doc in self.docs:
             doc_l = sum(len(line) for line in doc)
             doc_lengths.append(doc_l)
-        
+
         return doc_lengths

@@ -9,7 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '../../'))
 from classifiers.knn import Knn
 from evaluation.evaluation import Evaluator
 from vector import Vector
-from data_representations import BOW
+from bow import BOW
 
 
 class TestKnn(unittest.TestCase):
@@ -60,7 +60,8 @@ class TestKnn(unittest.TestCase):
         testing_labels = [3, 4, 4]
 
         classifier = Knn(training, labels)
-        predictions = classifier.predict(testing_inputs, k=3, measure='jaccard')
+        predictions = classifier.predict(testing_inputs, k=3,
+                                         measure='jaccard')
 
         evaluator = Evaluator(testing_labels, predictions)
         self.assertAlmostEqual(evaluator.accuracy(), 2/3)

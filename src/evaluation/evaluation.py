@@ -215,21 +215,3 @@ class Evaluator():
         else:
             return ((2 * self.micro_precision() * self.micro_recall()) /
                     denominator)
-
-
-if __name__ == '__main__':
-    evaluator = Evaluator([1, 2, 0, 0], [1, 2, 1, 1])
-    print(evaluator.tp_per_class)
-    print(evaluator.fn_per_class)
-    print(evaluator.fp_per_class)
-    print(evaluator.tn_per_class)
-    print(evaluator.accuracy())
-    print(evaluator.precision_per_class())
-    print(evaluator.recall_per_class())
-    print(evaluator.fscore_per_class())
-    print(evaluator.macro_precision())
-    print(evaluator.micro_precision())
-    print(evaluator.macro_recall())
-    print(evaluator.micro_recall())
-    print(evaluator.macro_fscore())
-    print(evaluator.micro_fscore())

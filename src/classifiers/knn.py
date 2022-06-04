@@ -9,9 +9,12 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..',
 from vector import Vector
 
 
+# TODO: merge Tversky into the class (you can just add extra parameters,
+# if you don't find any better solution)
+
 class Knn():
-    """The K-nearest neighbor classifier for artist classification.
-    Using vector representations.
+    """The K-nearest neighbor classifier for artist classification 
+    using vector representations.
 
     This class is implemented to allow for multiprocess execution.
     """
@@ -40,13 +43,11 @@ class Knn():
                     not same dimensions."""
             raise ValueError(error)
 
-        # self.data = multiprocessing.Manager().list(input)
-        # self.targets = multiprocessing.Manager().list(targets)
-
         self.multi_process = multi_process
         self.data = input
         self.targets = targets
 
+    # TODO: add comments for method
     def _predict(self, input: List[Vector], k, measure) -> List[int]:
         predictions = []
         for x in input:
@@ -67,22 +68,28 @@ class Knn():
       
         return predictions
 
+    # TODO: call this function differnetly, so that it shows that it's meant
+    # for multiprocessing
+    # TODO: add comments for method
     def _predict_multiprocess(self,
                               input: List[Vector],
                               k,
                               measure) -> List[int]:
+
         # Function used for splitting input into chunks for processes
         def chunks(lst, n):
             """Yield successive n-sized chunks from lst."""
             for i in range(0, len(lst), n):
                 yield lst[i:i + n]
                 
-                
+        # TODO: add comments on chunks
         chunk_size = int(len(input) / self.multi_process)
         with concurrent.futures.ProcessPoolExecutor(self.multi_process) as ex:
             futures = []
             predictions = []
 
+            # TODO: add comments on future variables and why we're waiting
+            # and joining everythin to a list
             for examples in chunks(input, chunk_size):
                 futures.append(ex.submit(self._predict, examples, k, measure))
 

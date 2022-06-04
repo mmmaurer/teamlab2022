@@ -67,8 +67,6 @@ class TfIdf():
         """Learns vocabulary and idf values from input documents and
         returns tf-idf document-term matrix
 
-        TODO: This joins the fit() and transform() methods, not optimized.
-
         Args:
             docs (List[List[str]]): list of documents represented
                                     as list of str
