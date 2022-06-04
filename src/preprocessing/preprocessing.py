@@ -47,9 +47,11 @@ class Preprocessor():
 
         return artists, titles, tokenized_lyrics
 
-    # TODO: add description to tokenizer method (so what _roughly_ it's doing)
     def tokenize(self, lyrics):
-        """Tokenize
+        """Tokenizes the raw data into a list of words in the lyrics by first
+        cleaning the special newline characters and then splitting the string
+        on the whitespaces. Depending on the value of self.keep_punc it removes
+        or keeps punctuation.
 
         Args:
             lyrics (string): Lyrics of a song to be tokenized
