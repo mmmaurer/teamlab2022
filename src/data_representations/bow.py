@@ -1,6 +1,5 @@
 import typing
 
-# TODO: add tests for BOW
 
 class BOW():
     """Bag of word class represented by sets
