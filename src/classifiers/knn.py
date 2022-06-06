@@ -1,5 +1,5 @@
 import itertools
-from typing import List
+from typing import List, Union
 import sys
 import os
 import concurrent.futures
@@ -7,20 +7,21 @@ import concurrent.futures
 sys.path.append(os.path.join(os.path.dirname(__file__), '..',
                              'data_representations'))
 from vector import Vector
+from bow import BOW
 
 
 # TODO: merge Tversky into the class (you can just add extra parameters,
 # if you don't find any better solution)
 
 class Knn():
-    """The K-nearest neighbor classifier for artist classification 
+    """The K-nearest neighbor classifier for artist classification
     using vector representations.
 
     This class is implemented to allow for multiprocess execution.
     """
 
     def __init__(self,
-                 input: List[Vector],
+                 input: List[Union[Vector, BOW]],
                  targets: List[int],
                  multi_process=1) -> None:
         """ TODO: Input typing will change to a general representation.
@@ -48,13 +49,16 @@ class Knn():
         self.targets = targets
 
     # TODO: add comments for method
-    def _predict(self, input: List[Vector], k, measure) -> List[int]:
+    def _predict(self, input: List[Union[Vector, BOW]], k, measure, alpha, beta) -> List[int]:
         predictions = []
         for x in input:
             distances = []
             # Calculate distance between x and all examples in training set
             for i, example in enumerate(self.data):
-                distance = example.distance(x, measure=measure)
+                if measure == 'tversky':
+                    distance = example.distance(x, measure=measure, alpha=alpha, beta=beta)
+                else:
+                    distance = example.distance(x, measure=measure)
                 distances.append([i, distance])
 
             # Sorts distances and picks k closest examples
@@ -72,9 +76,9 @@ class Knn():
     # for multiprocessing
     # TODO: add comments for method
     def _predict_multiprocess(self,
-                              input: List[Vector],
+                              input: List[Union[Vector, BOW]],
                               k,
-                              measure) -> List[int]:
+                              measure, alpha, beta) -> List[int]:
 
         # Function used for splitting input into chunks for processes
         def chunks(lst, n):
@@ -91,14 +95,14 @@ class Knn():
             # TODO: add comments on future variables and why we're waiting
             # and joining everythin to a list
             for examples in chunks(input, chunk_size):
-                futures.append(ex.submit(self._predict, examples, k, measure))
+                futures.append(ex.submit(self._predict, examples, k, measure, alpha, beta))
 
             concurrent.futures.wait(futures)
             predictions += list(itertools.chain(*[future.result() for future in futures]))
 
         return predictions
 
-    def predict(self, input: List[Vector], k=5, measure="cosine") -> List[int]:
+    def predict(self, input: List[Union[Vector, BOW]], k=5, measure="cosine", alpha=0.1, beta=0.1) -> List[int]:
         """Predict classification for a list of input examples.
 
         If the value of variable 'multi_process' > 1, the algorithm will make
@@ -110,6 +114,10 @@ class Knn():
                                Defaults to 5.
             measure (string, optional): Distance measure to use.
                                         Defaults to "cosine".
+            alpha (float, optional): Alpha value for Tversky index.
+                                     Defaults to 1.
+            beta (float, optional): Beta value for Tversky index.
+                                    Defaults to 1.
 
         Raises:
             TypeError: raised when input is not of same class type as
@@ -124,8 +132,8 @@ class Knn():
             raise TypeError("Input and model data types are not of same class")
 
         if self.multi_process > 1:
-            predictions = self._predict_multiprocess(input, k, measure)
+            predictions = self._predict_multiprocess(input, k, measure, alpha, beta)
         else:
-            predictions = self._predict(input, k, measure)
+            predictions = self._predict(input, k, measure, alpha, beta)
 
         return predictions
