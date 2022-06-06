@@ -10,9 +10,6 @@ from vector import Vector
 from bow import BOW
 
 
-# TODO: merge Tversky into the class (you can just add extra parameters,
-# if you don't find any better solution)
-
 class Knn():
     """The K-nearest neighbor classifier for artist classification
     using vector representations.
@@ -24,7 +21,7 @@ class Knn():
                  input: List[Union[Vector, BOW]],
                  targets: List[int],
                  multi_process=1) -> None:
-        """ TODO: Input typing will change to a general representation.
+        """
 
         Args:
             input (typing.List[BOW]): training examples used by the model.
@@ -48,15 +45,35 @@ class Knn():
         self.data = input
         self.targets = targets
 
-    # TODO: add comments for method
-    def _predict(self, input: List[Union[Vector, BOW]], k, measure, alpha, beta) -> List[int]:
+    def _predict(self,
+                 input: List[Union[Vector, BOW]],
+                 k,
+                 measure,
+                 alpha,
+                 beta) -> List[int]:
+        """Internal method that maked a prediction of the input.
+
+        Args:
+            input (List[Union[Vector, BOW]]): input examples we want to
+                                              predict.
+            k (int): number of nearest neighbours to compare.
+            measure (string): Distance measure to use.
+            alpha (float): Alpha value for Tversky index.
+            beta (float): Beta value for Tversky index.
+
+        Returns:
+            List[int]: list of predictions.
+        """
         predictions = []
         for x in input:
             distances = []
             # Calculate distance between x and all examples in training set
             for i, example in enumerate(self.data):
                 if measure == 'tversky':
-                    distance = example.distance(x, measure=measure, alpha=alpha, beta=beta)
+                    distance = example.distance(x,
+                                                measure=measure,
+                                                alpha=alpha,
+                                                beta=beta)
                 else:
                     distance = example.distance(x, measure=measure)
                 distances.append([i, distance])
@@ -69,47 +86,85 @@ class Knn():
 
             label = max(labels, key=labels.count)
             predictions.append(label)
-      
+
         return predictions
 
-    # TODO: call this function differnetly, so that it shows that it's meant
-    # for multiprocessing
-    # TODO: add comments for method
-    def _predict_multiprocess(self,
+    def _multiprocess_predict(self,
                               input: List[Union[Vector, BOW]],
                               k,
-                              measure, alpha, beta) -> List[int]:
+                              measure,
+                              alpha,
+                              beta) -> List[int]:
+        """Internal method that maked a prediction of the input using
+        multiple processes.
+
+        Actually just calls self._predict().
+
+        This method is very memory intensive, since every process
+        has it's own memory copy of the main program. So use wisely.
+
+        Args:
+            input (List[Union[Vector, BOW]]): input examples we want to
+                                              predict.
+            k (int): number of nearest neighbours to compare.
+            measure (string): Distance measure to use.
+            alpha (float): Alpha value for Tversky index.
+            beta (float): Beta value for Tversky index.
+
+        Returns:
+            List[int]: list of predictions.
+        """
 
         # Function used for splitting input into chunks for processes
         def chunks(lst, n):
             """Yield successive n-sized chunks from lst."""
             for i in range(0, len(lst), n):
                 yield lst[i:i + n]
-                
-        # TODO: add comments on chunks
+
+        # Decides how many examples each process will have, so that
+        # it's evenly distributed amoung n processes
         chunk_size = int(len(input) / self.multi_process)
+
         with concurrent.futures.ProcessPoolExecutor(self.multi_process) as ex:
             futures = []
             predictions = []
 
-            # TODO: add comments on future variables and why we're waiting
-            # and joining everythin to a list
             for examples in chunks(input, chunk_size):
-                futures.append(ex.submit(self._predict, examples, k, measure, alpha, beta))
+                # The ex.submit method starts up a new process and returns
+                # a Future object refering to newly created process.
+                #
+                # ex.submit also saves the order of predictions, so there's
+                # no need to keep extra track of orders
+                futures.append(ex.submit(self._predict,
+                                         examples,
+                                         k,
+                                         measure,
+                                         alpha,
+                                         beta))
 
+            # waits for all processes to finish predictions to be able to
+            # join them together into a final list
             concurrent.futures.wait(futures)
-            predictions += list(itertools.chain(*[future.result() for future in futures]))
+
+            predictions += list(itertools.chain(*[future.result()
+                                                  for future in futures]))
 
         return predictions
 
-    def predict(self, input: List[Union[Vector, BOW]], k=5, measure="cosine", alpha=0.1, beta=0.1) -> List[int]:
+    def predict(self,
+                input: List[Union[Vector, BOW]],
+                k=5,
+                measure="cosine",
+                alpha=1.0,
+                beta=1.0) -> List[int]:
         """Predict classification for a list of input examples.
 
         If the value of variable 'multi_process' > 1, the algorithm will make
-        predictions using multiple processes.
+        predictions using multiple processes for performance gains.
 
         Args:
-            input (typing.List[BOW]): input examples we want to predict.
+            input (List[Union[Vector, BOW]]): input examples we want to
+                                              predict.
             k (int, optional): number of nearest neighbours to compare.
                                Defaults to 5.
             measure (string, optional): Distance measure to use.
@@ -124,7 +179,7 @@ class Knn():
                        examples in the model.
 
         Returns:
-            typing.List[int]: list of predictions.
+            List[int]: list of predictions.
         """
 
         if not isinstance(input[0], Vector) == isinstance(self.data[0],
@@ -132,8 +187,16 @@ class Knn():
             raise TypeError("Input and model data types are not of same class")
 
         if self.multi_process > 1:
-            predictions = self._predict_multiprocess(input, k, measure, alpha, beta)
+            predictions = self._multiprocess_predict(input,
+                                                     k,
+                                                     measure,
+                                                     alpha,
+                                                     beta)
         else:
-            predictions = self._predict(input, k, measure, alpha, beta)
+            predictions = self._predict(input,
+                                        k,
+                                        measure,
+                                        alpha,
+                                        beta)
 
         return predictions
