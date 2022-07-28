@@ -111,13 +111,15 @@ class BOW():
         Returns:
             float: the Tversky index
         """
-        n = (len(self.rep.intersection(other.rep)) +
+        intersection = self.rep.intersection(other.rep)
+
+        n = (len(intersection) +
              abs(alpha*len(self.rep - other.rep)) +
              abs(beta*len(other.rep - self.rep)))
         if n == 0:  # both BOWs are empty
             return 0  # minimum Tversky index
         else:
-            return len(self.rep.intersection(other.rep))/n
+            return len(intersection)/n
 
     def __overlap(self, other):
         """Overlap coefficient for two BOWs
