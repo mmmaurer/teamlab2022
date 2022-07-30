@@ -1,0 +1,1 @@
+Example Artist  Example Songtitle	First line of the song NEWLINE Second line of the song NEWLINE Last line of the song NEWLINE
