@@ -21,6 +21,8 @@ Run the kNN baseline experiments by specifying the number of classes `n` and how
 
 `$ python baseline.py n p`
 
+Note that the results will be logged in a log file. To change the name or directory, change the file name in the second to last line of the script.
+
 
 ## Dataset
 Unfortunately, we have do not have the rights to distribute the dataset we used in this project. To use the code provided here with your own dataset, add your own training, validation and test datasets structured like [the example file](./data/songs_example.txt).
