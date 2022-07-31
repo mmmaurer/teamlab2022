@@ -1,11 +1,32 @@
-# Artist classification
-This is the repository of the project for the Team Laboratory Computational Linguistics course at the University of Stuttgart in the summer term of 2022. 
+# Too many classes this semester: Analyzing BERT on a large multi-class classification problem
+This is the repository for the project of the Team Laboratory Computational Linguistics course at the University of stuttgart in the summer term of 2022.
 
-The artist classification task is to classify which artist performed/wrote a certain song given the lyrics.
+In this project, we analyze BERT's performance for increasing numbers of classes. We use artist classification from lyrics as an example task for that.
+
+We compare the performance deterioration of two baselines, random choice and kNN with set-based BOW as representation, with fine-tuning BERT and evaluating the performance on the classification head as well as using the embeddings for kNN. Additionally, we experiment with using embeddings from pre-trained BERT for kNN. 
+
+We evaluate these settings using accuracy.
+
+Find the baseline kNN implementation [here](./baseline.py), examples for the random baseline and BERT experiments in the [bert_baseline](./notebooks/bert-baseline.ipynb) notebook and the full experiments for different numbers of classes in the [bert-diff-classes](./notebooks/bert-diff-classes.ipynb).
+
+## Installation
+
+To run the code, install the dependencies from the requirements file:
+
+`$ pip install -r requirements.txt`
+
+## Baselines
+
+Run the kNN baseline experiments by specifying the number of classes `n` and how many processes to use for multiprocessing `p`:
+
+`$ python baseline.py n p`
+
 
 ## Dataset
+Unfortunately, we have do not have the rights to distribute the dataset we used in this project. To use the code provided here with your own dataset, add your own training, validation and test datasets structured like [the example file](./data/songs_example.txt).
 
-Per instance (song), the dataset includes a triple with the *artist name*, *song title* and the *lyrics* of a song. 
+### Dataset description
+Per instance (song), the dataset used includes a triple with the *artist name*, *song title* and the *lyrics* of a song. 
 
 Overview over the number of artists/songs in the dataset:
 - | | Train | Val | Test |
@@ -13,18 +34,42 @@ Overview over the number of artists/songs in the dataset:
     Artists | 642 | 612 | 618 |
     Songs | 46,120 | 5,765| 5,765|
 
-## Baseline implementation
-TODO: short description about the baseline implementation (just overview of all the headings in the document for this)
+We provide a short descriptive data analysis [here](./notebooks/team-labs-descriptive-analysis.ipynb).
 
-The baselines of this are a [k-nearest neighbors (KNN)](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) classifier ([implementation](./src/classifiers/knn.py)).
+## Task: Artist classification
+The artist classification task is to classify which artist performed/wrote a certain song given only the lyrics in a textual form.
 
-We experiment with different combinations of data representations and distance/similarity measures as well as with additional stylometric features (number of lines in lyric, length of lyric in words).
+## Results
+While we ﬁnd that for lower numbers of classes, fully ﬁne-tuned BERT outperforms the baseline and the BERT kNN variants for lower numbers of classes, that trend does not hold for greater numbers of classes. For higher numbers of classes, using ﬁne-tuned BERT embeddings with kNN outperforms the other methods.
 
-### Evaluations
+![results](./results.png)
+
+| # of classes | random | knn-bow | knn-pre-bert | bert  | knn-bert |
+|--------------|--------|---------|--------------|-------|----------|
+| 10           | 0.098  | 0.481   | 0.481        | 0.87  | 0.614    |
+| 20           | 0.035  | 0.335   | 0.455        | 0.63  | 0.44     |
+| 50           | 0.022  | 0.182   | 0.328        | 0.381 | 0.28     |
+| 100          | 0.009  | 0.118   | 0.224        | 0.219 | 0.25     |
+| 200          | 0.004  | 0.08    | 0.157        | 0.181 | 0.174    |
+| 300          | 0.003  | 0.065   | 0.127        | 0.155 | 0.165    |
+| 400          | 0.002  | 0.06    | 0.116        | 0.001 | 0.055    |
+| 500          | 0.002  | 0.056   | 0.095        | 0.065 | 0.103    |
+| 643          | 0.001  | 0.056   | 0.088        | 0.073 | 0.104    |
+
+Accuracy of different multi-class classiﬁcation methods using different class sizes. First column represents the number of classes in each set that the methods are trained/evaluated on. `Knn-bow` refers to BOW representation with a kNN classiﬁer. `Knn-pre-bert` refers to pre-trained BERT embeddings with a kNN classiﬁer. `bert` refers to ﬁne-tuned BERT model and `knn-bert` using the ﬁne-tuned embeddings with kNN. Best results for each size is highlighted in bold.
+
+# Appendix
+Additionally to the functionality and experiments mentioned above, we conducted the following baseline experiments.
+
+These experiments are conducted using the [k-nearest neighbors (KNN)](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm) classifier ([implementation](./src/classifiers/knn.py)).
+
+We experiment with different combinations of data representations and distance/similarity measures as well as with additional structural features (number of lines in lyric, length of lyric in words).
+
+## Evaluation
 We evaluate our experiments using Accuracy as well as micro-averaged Precision, Recall and F<sub>1</sub>-Score. Find these and the implementations macro-averaged metrics [here](./src/evaluation/evaluation.py).
 
 
-### Data representations
+## Data representations
 We use two kinds of representations for the lyrics
 - [Bags of Words (BOW)](https://en.wikipedia.org/wiki/Bag-of-words_model) implemented as sets ([implementation](./src/data_representations/bow.py))
 
@@ -40,10 +85,10 @@ We use two kinds of representations for the lyrics
     - [Cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity)
     - [Euclidean distance](https://en.wikipedia.org/wiki/Euclidean_distance)
 
-### Results
-Find the experiments and results in these two notebooks: 
-- [Experiments 1](./notebooks/experiments.ipynb)
-- [Experiments 2](./notebooks/experiments_server.ipynb)
+## Results
+Find the experiments and results, and a tutorial on how to use our code  in these two notebooks: 
+- [Experiments BOW](./notebooks/appendix_bow_experiments.ipynb)
+- [Experiments Random Baseline and tf-idf](./notebooks/appendix_tf-idf_experiments.ipynb)
 
 |                      |                            | 10k train |           | 20k train |           |
 |----------------------|----------------------------|-----------|-----------|-----------|-----------|
