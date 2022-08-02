@@ -7,7 +7,7 @@ We compare the performance deterioration of two baselines, random choice and kNN
 
 We evaluate these settings using accuracy.
 
-Find the baseline kNN implementation [here](./baseline.py), examples for the random baseline and BERT experiments in the [bert_baseline](./notebooks/bert-baseline.ipynb) notebook and the full experiments for different numbers of classes in the [bert-diff-classes](./notebooks/bert-diff-classes.ipynb).
+Find the baseline kNN implementation [here](./baseline.py), examples for the random baseline and BERT experiments in the [bert](./notebooks/bert.ipynb) notebook and the full experiments for different numbers of classes in the [bert-diff-classes](./notebooks/bert-diff-classes.ipynb).
 
 ## Installation
 
